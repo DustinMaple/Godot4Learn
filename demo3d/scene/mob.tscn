@@ -6,7 +6,8 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_dhwrb"]
 size = Vector3(2.31919, 0.914972, 2.75619)
 
-[node name="Mod" type="CharacterBody3D"]
+[node name="Mod" type="CharacterBody3D" groups=["mob"]]
+collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_awdxd")
 

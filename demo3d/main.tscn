@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://ybk6duj1twre"]
+[gd_scene load_steps=13 format=3 uid="uid://ybk6duj1twre"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_ug75u"]
 [ext_resource type="PackedScene" uid="uid://b4ighcl7f12yb" path="res://scene/player.tscn" id="1_vbpwi"]
 [ext_resource type="PackedScene" uid="uid://db62kdicqweqo" path="res://scene/mob.tscn" id="2_6j37d"]
+[ext_resource type="FontFile" uid="uid://cdnj3hp8hjamo" path="res://fonts/Montserrat-Medium.ttf" id="4_134er"]
+[ext_resource type="Script" path="res://ScoreLabel.gd" id="5_2dbov"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hd64h"]
 size = Vector3(60, 2, 60)
@@ -18,10 +20,16 @@ material = SubResource("StandardMaterial3D_r710m")
 
 [sub_resource type="Curve3D" id="Curve3D_5l0ku"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.0548582, 0.0205002, -25.7454, 0, 0, 0, 0, 0, 0, 26.071, 0.0206146, -25.6498, 0, 0, 0, 0, 0, 0, 26.2163, -0.000179291, 0.465359, 0, 0, 0, 0, 0, 0, -0.0420713, -0.000331879, 0.415888, 0, 0, 0, 0, 0, 0, 0.0548582, 0.0205002, -25.7454),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -13, 0.021, -16, 0, 0, 0, 0, 0, 0, 13, 0.021, -16, 0, 0, 0, 0, 0, 0, 13, 0, 11, 0, 0, 0, 0, 0, 0, -13, 0, 11, 0, 0, 0, 0, 0, 0, -13, 0.021, -16),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0)
 }
 point_count = 5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1x3sr"]
+
+[sub_resource type="Theme" id="Theme_mvtrx"]
+default_font = ExtResource("4_134er")
+default_font_size = 22
 
 [node name="Main" type="Node"]
 script = ExtResource("1_ug75u")
@@ -29,6 +37,8 @@ mob_scene = ExtResource("2_6j37d")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+collision_layer = 4
+collision_mask = 0
 metadata/_edit_group_ = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
@@ -53,9 +63,10 @@ projection = 1
 size = 19.0
 
 [node name="Cylinders" type="Node3D" parent="."]
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Cylinders"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.996, 0.01, -15.065)
 mesh = SubResource("CylinderMesh_c4oib")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Cylinders"]
@@ -71,13 +82,35 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 11)
 mesh = SubResource("CylinderMesh_c4oib")
 
 [node name="SpawnPath" type="Path3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, 11)
 curve = SubResource("Curve3D_5l0ku")
 
 [node name="SpawnPosition" type="PathFollow3D" parent="SpawnPath"]
-transform = Transform3D(-0.00367426, -4.39878e-06, -0.999993, -2.27371e-13, 1, -4.39881e-06, 0.999982, -1.61623e-08, -0.0036743, 0.0548582, 0.0205002, -25.7454)
+transform = Transform3D(-4.37106e-08, 0, -1, 0, 1, 0, 0.999983, 0, -4.37114e-08, -13, 0.021, -15.84)
+h_offset = 0.16
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpawnPath/SpawnPosition"]
+visible = false
+mesh = SubResource("CylinderMesh_1x3sr")
 
 [node name="SpawnTimer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 0.5
 
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScoreLabel" type="Label" parent="UserInterface"]
+layout_mode = 0
+offset_left = 55.0
+offset_top = 36.0
+offset_right = 112.0
+offset_bottom = 62.0
+theme = SubResource("Theme_mvtrx")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Score: 0"
+script = ExtResource("5_2dbov")
+
+[connection signal="dead" from="Player" to="." method="_on_player_dead"]
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
