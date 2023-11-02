@@ -5,6 +5,7 @@ signal squashed
 @export var min_speed = 10
 @export var max_speed = 20
 
+var dead = false
 
 func _physics_process(delta):
 	move_and_slide()
@@ -14,6 +15,7 @@ func initialize(startPosition, targetPosition):
 	var speed = randf_range(min_speed, max_speed)
 	rotate_y(randf_range(-PI/4, PI/4))	
 	velocity = Vector3.FORWARD.rotated(Vector3.UP, rotation.y) * speed
+	$AnimationPlayer.speed_scale = 4
 	pass
 
 
@@ -22,6 +24,9 @@ func _on_visible_on_screen_notifier_3d_screen_exited():
 	pass # Replace with function body.
 
 func squash():
+	if dead:
+		return
+	dead = true
 	squashed.emit()
 	queue_free()
 	

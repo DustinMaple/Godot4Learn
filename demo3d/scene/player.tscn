@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://b4ighcl7f12yb"]
+[gd_scene load_steps=8 format=3 uid="uid://b4ighcl7f12yb"]
 
 [ext_resource type="Script" path="res://scene/player.gd" id="1_3txla"]
 [ext_resource type="PackedScene" uid="uid://bxa1sv58xu00e" path="res://art/player.glb" id="1_g5oj8"]
+[ext_resource type="Animation" uid="uid://daxu3tqiiebg" path="res://animation/float.res" id="3_tl0hs"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_055yv"]
 margin = 0.0
@@ -11,11 +12,45 @@ radius = 0.8
 height = 0.8
 radius = 1.2
 
+[sub_resource type="Animation" id="Animation_hdfkf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pivot/Character:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/Character:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vrgkk"]
+_data = {
+"RESET": SubResource("Animation_hdfkf"),
+"float": ExtResource("3_tl0hs")
+}
+
 [node name="Player" type="CharacterBody3D"]
 collision_mask = 6
 script = ExtResource("1_3txla")
 
 [node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.265643, 0)
 
 [node name="Character" parent="Pivot" instance=ExtResource("1_g5oj8")]
 
@@ -32,5 +67,11 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MobDetector"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.30361, 0)
 shape = SubResource("CylinderShape3D_c3uao")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "float"
+libraries = {
+"": SubResource("AnimationLibrary_vrgkk")
+}
 
 [connection signal="body_entered" from="MobDetector" to="." method="_on_mob_detector_body_entered"]
