@@ -1,4 +1,4 @@
-# Godot4Learn
+# godot-study
 学习Godot4.1的练习项目
 
 # 目录说明
